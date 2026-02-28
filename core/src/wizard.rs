@@ -66,10 +66,14 @@ impl Wizard {
         R: io::Read,
     {
         let count = if version >= 5.6 {
-            reader.read_u32::<LE>()?
+            reader.read_i32::<LE>()?
         } else {
             1
         };
+
+        if count == -1 {
+            return Ok(Vec::new());
+        }
 
         let mut images = (0..count)
             .map(|_| reader.read_raw_pascal_string())
